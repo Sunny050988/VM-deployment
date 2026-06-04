@@ -50,7 +50,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
     os_disk {
         caching              = "ReadWrite"
         storage_account_type = "Standard_LRS" 
-        disk_size_gb         = 30  
+        disk_size_gb         = 128 
         name                 = "DC-01-osdisk"
         
 
@@ -58,9 +58,9 @@ resource "azurerm_windows_virtual_machine" "vm" {
 
     source_image_reference {
         publisher = "MicrosoftWindowsdesktop"
-        offer     = "Windows-10"
-        sku       = "22H2-pro"
-        version   = "Standard_E4ds_v6"
+        offer     = "windows-11"
+        sku       = "win11-23h2-ent"
+        version   = "22631.6649.260207"
     }
 }   
 
