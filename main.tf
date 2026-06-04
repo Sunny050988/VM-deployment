@@ -1,52 +1,50 @@
 
 # refrence the existing resource group  
 
-data "azurerm_resource_group" "res0" {
+data "azurerm_resource_group" "rg" {
   name     = "rg-vwan-aue"
-  location = "Australia East"
 }
 
 # refrence the existing virtual network
 
-data "azurerm_virtual_network" "res1" {
+data "azurerm_virtual_network" "vnet" {
   name                = "prod-vnet"
-  resource_group_name = azurerm_resource_group.res0.name
-  location            = "Australia East"
-  address_space       = ["10.1.0.0/16"]
+  resource_group_name = data.azurerm_resource_group.rg.name
   
 }
 # create a subnet within the existing virtual network
 
-resource "azurerm_subnet" "res2" {
+resource "azurerm_subnet" "vm_subnet" {
   name                 = "VM-subnet"
-  resource_group_name  = azurerm_resource_group.res0.name
-  virtual_network_name = azurerm_virtual_network.res1.name
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  virtual_network_name = data.azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.1.4.0/24"]
 
 }
-#network interface
-resource "azurerm_network_interface" "res3" {
-  name                = "res3-nic"
-  resource_group_name = azurerm_resource_group.res0.name
-  location            = azurerm_resource_group.res0.location
+#network interface for the virtual machine
+resource "azurerm_network_interface" "nic" {
+  name                = "dc01"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.res2.id
-    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.vm_subnet.id
+    private_ip_address_allocation ="Dynamic"
   }
 }       
 
 
 #create a Virtual Machine within the resource group
-resource "azurerm_windows_virtual_machine" "res4" {
+resource "azurerm_windows_virtual_machine" "vm" {
     name                = "DC-01"
-    resource_group_name = azurerm_resource_group.res0.name
-    location            = azurerm_resource_group.res0.location
-    size                = "Standard_D2s_v3 -- 2 vCPUs, 4 GB RAM"
+    computer_name       = "DC-01"
+    resource_group_name = data.azurerm_resource_group.rg.name
+    location            = data.azurerm_resource_group.rg.location
+    size                = "Standard_D2s_v3"
     admin_username      = "Web"
     admin_password      = "Login@053188"
     network_interface_ids = [
-        azurerm_network_interface.res3.id,
+      azurerm_network_interface.nic.id,
     ]
 
     os_disk {
