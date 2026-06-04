@@ -9,16 +9,16 @@ resource "azurerm_resource_group" "res0" {
 resource "azurerm_virtual_network" "res1" {
   name                = "prod-vnet"
   resource_group_name = azurerm_resource_group.res0.name
-  location            = "New Zealand North"
+  location            = "Australia East"
   address_space       = ["10.1.0.0/16"]
   
 }
 #subnet
 resource "azurerm_subnet" "res2" {
-  name                 = "prod-subnet"
+  name                 = "VM-subnet"
   resource_group_name  = azurerm_resource_group.res0.name
   virtual_network_name = azurerm_virtual_network.res1.name
-  address_prefixes     = ["10.1.1.0/24"]
+  address_prefixes     = ["10.1.4.0/24"]
 
 }
 #network interface
