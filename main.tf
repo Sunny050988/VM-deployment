@@ -1,19 +1,22 @@
 
-# Create a resource group
-resource "azurerm_resource_group" "res0" {
+# refrence the existing resource group  
+
+data "azurerm_resource_group" "res0" {
   name     = "rg-vwan-aue"
   location = "Australia East"
 }
 
-# virtual network within the resource group
-resource "azurerm_virtual_network" "res1" {
+# refrence the existing virtual network
+
+data "azurerm_virtual_network" "res1" {
   name                = "prod-vnet"
   resource_group_name = azurerm_resource_group.res0.name
   location            = "Australia East"
   address_space       = ["10.1.0.0/16"]
   
 }
-#subnet
+# create a subnet within the existing virtual network
+
 resource "azurerm_subnet" "res2" {
   name                 = "VM-subnet"
   resource_group_name  = azurerm_resource_group.res0.name
